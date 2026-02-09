@@ -3,6 +3,7 @@ package GIOVANNILONGO.BE_GARA.entities;
 import GIOVANNILONGO.BE_GARA.enums.Input;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
@@ -16,6 +17,7 @@ import java.time.LocalDateTime;
 )
 @Getter
 @Setter
+@NoArgsConstructor
 public class TimeRecord {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

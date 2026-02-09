@@ -2,14 +2,17 @@ package GIOVANNILONGO.BE_GARA.entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "giorno_gara")
+@Table(name = "giorno_gara",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"gara_id", "data"}))
 @Getter
 @Setter
+@NoArgsConstructor
 public class GiornoGara {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,4 +23,5 @@ public class GiornoGara {
     private Gara gara;
 
     private LocalDate data;
+    private Integer numero;
 }

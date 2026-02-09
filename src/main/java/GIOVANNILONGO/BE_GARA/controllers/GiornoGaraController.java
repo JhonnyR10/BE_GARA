@@ -1,0 +1,34 @@
+package GIOVANNILONGO.BE_GARA.controllers;
+
+import GIOVANNILONGO.BE_GARA.payloads.GiornoGaraResponse;
+import GIOVANNILONGO.BE_GARA.services.GiornoGaraService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/giornate-gara")
+@RequiredArgsConstructor
+public class GiornoGaraController {
+
+    private final GiornoGaraService service;
+
+    @GetMapping("/gara/{garaId}")
+    public List<GiornoGaraResponse> listByGara(
+            @PathVariable Long garaId
+    ) {
+
+        return service.getByGara(garaId)
+                .stream()
+                .map(g -> new GiornoGaraResponse(
+                        g.getId(),
+                        g.getNumero(),
+                        g.getData()
+                ))
+                .toList();
+    }
+}

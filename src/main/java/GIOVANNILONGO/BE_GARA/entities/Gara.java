@@ -3,6 +3,7 @@ package GIOVANNILONGO.BE_GARA.entities;
 import GIOVANNILONGO.BE_GARA.enums.StatoGara;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
@@ -11,7 +12,7 @@ import java.time.LocalDate;
 @Table(name = "gare")
 @Getter
 @Setter
-
+@NoArgsConstructor
 public class Gara {
 
     @Id
@@ -24,4 +25,6 @@ public class Gara {
 
     @Enumerated(EnumType.STRING)
     private StatoGara stato;
+
+    private Integer numeroStazioni;
 }
