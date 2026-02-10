@@ -5,8 +5,8 @@ import java.time.LocalDateTime;
 public record TempoSnapshotDTO(
         Long id,
         Long pilotaId,
-        Long postazioneId,
-        Integer ordinePostazione,
+        Long stazioneId,
+        Integer ordineStazione,
         LocalDateTime timestamp
 ) {
 }

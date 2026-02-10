@@ -19,9 +19,15 @@ public class ClassificaController {
 
     @GetMapping("/giornata/{giornataGaraId}")
     public List<RigaClassificaDTO> classificaGiornata(
-            @PathVariable Long giornoGaraId
+            @PathVariable Long giornataGaraId
     ) {
-        return service.classificaPerGiornata(giornoGaraId);
+        return service.classificaPerGiornata(giornataGaraId);
     }
+
+    @GetMapping("/gara/{garaId}/totale")
+    public List<RigaClassificaDTO> classificaTotale(@PathVariable Long garaId) {
+        return service.classificaTotale(garaId);
+    }
+
 }
 

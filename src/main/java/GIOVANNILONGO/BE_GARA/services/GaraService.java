@@ -4,6 +4,7 @@ import GIOVANNILONGO.BE_GARA.entities.Gara;
 import GIOVANNILONGO.BE_GARA.entities.GiornoGara;
 import GIOVANNILONGO.BE_GARA.entities.Stazione;
 import GIOVANNILONGO.BE_GARA.enums.StatoGara;
+import GIOVANNILONGO.BE_GARA.enums.StatoGiornata;
 import GIOVANNILONGO.BE_GARA.enums.TipoStazione;
 import GIOVANNILONGO.BE_GARA.payloads.CreazioneGaraRequest;
 import GIOVANNILONGO.BE_GARA.repositories.GaraRepository;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -55,9 +57,6 @@ public class GaraService {
         return garaRepository.save(gara);
     }
 
-    public Gara getActiveRace() {
-        return garaRepository.findByStato(StatoGara.ATTIVA).orElseThrow();
-    }
 
     private void generaGiornate(Gara gara) {
 
@@ -70,6 +69,7 @@ public class GaraService {
             g.setNumero(numero++);
             g.setData(corrente);
             g.setGara(gara);
+            g.setStato(StatoGiornata.NON_INIZIATA);
 
             giornoGaraRepository.save(g);
 
@@ -102,6 +102,20 @@ public class GaraService {
         stazioneRepository.save(s);
     }
 
+    private void attivaPrimaGiornata(Gara gara) {
+
+        List<GiornoGara> giornate =
+                giornoGaraRepository.findByGaraIdOrderByData(gara.getId());
+
+        if (giornate.isEmpty()) {
+            throw new IllegalStateException("La gara non ha giornate");
+        }
+
+        GiornoGara prima = giornate.get(0);
+        prima.setStato(StatoGiornata.ATTIVA);
+    }
+
+
     public Gara apriGara(Long garaId) {
 
         Gara gara = garaRepository.findById(garaId)
@@ -113,6 +127,7 @@ public class GaraService {
 
         gara.setStato(StatoGara.ATTIVA);
         generaGiornate(gara);
+        attivaPrimaGiornata(gara);
         generaStazioni(gara, gara.getNumeroStazioni());
 
         return garaRepository.save(gara);

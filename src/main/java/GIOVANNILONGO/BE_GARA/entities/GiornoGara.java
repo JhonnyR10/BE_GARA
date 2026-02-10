@@ -1,5 +1,6 @@
 package GIOVANNILONGO.BE_GARA.entities;
 
+import GIOVANNILONGO.BE_GARA.enums.StatoGiornata;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,4 +25,9 @@ public class GiornoGara {
 
     private LocalDate data;
     private Integer numero;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private StatoGiornata stato;
+
 }

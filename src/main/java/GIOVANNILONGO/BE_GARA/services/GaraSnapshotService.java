@@ -1,6 +1,7 @@
 package GIOVANNILONGO.BE_GARA.services;
 
 import GIOVANNILONGO.BE_GARA.entities.*;
+import GIOVANNILONGO.BE_GARA.enums.StatoGiornata;
 import GIOVANNILONGO.BE_GARA.exceptions.DomainException;
 import GIOVANNILONGO.BE_GARA.repositories.*;
 import GIOVANNILONGO.BE_GARA.snapshots.*;
@@ -26,10 +27,13 @@ public class GaraSnapshotService {
                 );
 
         GiornoGara giornata =
-                giornoGaraRepository.findByGaraId(gara.getId())
-                        .orElseThrow(() ->
-                                new DomainException("Nessuna giornata trovata per la gara attiva")
-                        );
+                giornoGaraRepository.findByGaraIdAndStato(
+                        gara.getId(),
+                        StatoGiornata.ATTIVA
+                ).orElseThrow(() ->
+                        new DomainException("Nessuna giornata ATTIVA per la gara")
+                );
+
 
         return new GaraAttivaSnapshotDTO(
                 mapGara(gara),
@@ -82,7 +86,7 @@ public class GaraSnapshotService {
         return new TempoSnapshotDTO(
                 tempo.getId(),
                 tempo.getPilota().getId(),
-                tempo.getPilota().getId(),
+                tempo.getStazione().getId(),
                 tempo.getStazione().getOrdine(),
                 tempo.getTimestampRilevato()
         );
