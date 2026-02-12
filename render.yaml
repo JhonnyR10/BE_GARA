@@ -1,7 +1,0 @@
-services:
-  - type: web
-    name: be-gara
-    runtime: java
-    buildCommand: ./mvnw clean package -DskipTests
-    startCommand: java -jar target/*.jar
-
