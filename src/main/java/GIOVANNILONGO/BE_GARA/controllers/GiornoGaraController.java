@@ -1,5 +1,6 @@
 package GIOVANNILONGO.BE_GARA.controllers;
 
+import GIOVANNILONGO.BE_GARA.payloads.GiornoGaraDTO;
 import GIOVANNILONGO.BE_GARA.payloads.GiornoGaraResponse;
 import GIOVANNILONGO.BE_GARA.services.GiornoGaraService;
 import lombok.RequiredArgsConstructor;
@@ -33,4 +34,10 @@ public class GiornoGaraController {
     public void chiudiGiornata(@PathVariable Long garaId) {
         service.chiudiGiornataAttiva(garaId);
     }
+
+    @GetMapping("/gara/{garaId}/dto")
+    public List<GiornoGaraDTO> getByGara(@PathVariable Long garaId) {
+        return service.getGiornateDTO(garaId);
+    }
+
 }

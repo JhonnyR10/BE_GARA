@@ -2,7 +2,9 @@ package GIOVANNILONGO.BE_GARA.controllers;
 
 import GIOVANNILONGO.BE_GARA.entities.Pilota;
 import GIOVANNILONGO.BE_GARA.payloads.CreazionePilotaRequest;
+import GIOVANNILONGO.BE_GARA.payloads.PilotaDTO;
 import GIOVANNILONGO.BE_GARA.payloads.PilotaResponse;
+import GIOVANNILONGO.BE_GARA.payloads.UpdatePilotaRequest;
 import GIOVANNILONGO.BE_GARA.services.PilotaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -42,4 +44,19 @@ public class PilotaController {
                 ))
                 .toList();
     }
+
+    @DeleteMapping("/{pilotaId}")
+    public void delete(@PathVariable Long pilotaId) {
+        service.deletePilota(pilotaId);
+    }
+
+    @PatchMapping("/{pilotaId}")
+    public PilotaDTO update(
+            @PathVariable Long pilotaId,
+            @RequestBody UpdatePilotaRequest dto
+    ) {
+        return service.updatePilota(pilotaId, dto);
+    }
+
+
 }

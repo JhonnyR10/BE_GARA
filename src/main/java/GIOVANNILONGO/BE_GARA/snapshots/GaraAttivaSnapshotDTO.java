@@ -10,7 +10,8 @@ public record GaraAttivaSnapshotDTO(
         List<StazioneSnapshotDTO> stazioni,
         List<PilotaSnapshotDTO> piloti,
         List<TempoSnapshotDTO> tempi,
-        List<RigaClassificaDTO> classifica
+        List<RigaClassificaDTO> classifica,
+        boolean ultimaGiornata
 ) {
 }
 

@@ -74,22 +74,30 @@ public class TimeRecordService {
         //      salvato.getGiornoGara().getId()
         //);
 
-        realtimeService.inviaSnapshotGaraAttiva();
-        realtimeService.inviaClassificaGiornata(giornoGara.getId());
 
+        boolean garaConclusa = false;
 
         if (stazione.getTipo() == TipoStazione.STOP) {
 
             boolean giornataCompleta = verificaGiornataCompleta(giornoGara);
 
+//            if (giornataCompleta) {
+//                boolean ultimaGiornata =
+//                        giornoGaraService.chiudiGiornataAttiva(gara.getId());
+//
+//                if (ultimaGiornata) {
+//                    garaService.chiudiGara(gara.getId());
+//                }
+//            }
             if (giornataCompleta) {
-                boolean ultimaGiornata =
+                garaConclusa =
                         giornoGaraService.chiudiGiornataAttiva(gara.getId());
-
-                if (ultimaGiornata) {
-                    garaService.chiudiGara(gara.getId());
-                }
             }
+        }
+
+        if (!garaConclusa) {
+            realtimeService.inviaSnapshotGaraAttiva();
+            realtimeService.inviaClassificaGiornata(giornoGara.getId());
         }
 
 

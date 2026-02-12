@@ -6,12 +6,16 @@ import GIOVANNILONGO.BE_GARA.entities.Stazione;
 import GIOVANNILONGO.BE_GARA.enums.StatoGara;
 import GIOVANNILONGO.BE_GARA.enums.StatoGiornata;
 import GIOVANNILONGO.BE_GARA.enums.TipoStazione;
+import GIOVANNILONGO.BE_GARA.exceptions.DomainException;
 import GIOVANNILONGO.BE_GARA.payloads.CreazioneGaraRequest;
+import GIOVANNILONGO.BE_GARA.payloads.GaraListDTO;
+import GIOVANNILONGO.BE_GARA.payloads.UpdateGaraRequest;
 import GIOVANNILONGO.BE_GARA.repositories.GaraRepository;
 import GIOVANNILONGO.BE_GARA.repositories.GiornoGaraRepository;
 import GIOVANNILONGO.BE_GARA.repositories.StazioneRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -145,6 +149,62 @@ public class GaraService {
         gara.setStato(StatoGara.CONCLUSA);
 
         return garaRepository.save(gara);
+    }
+
+    public List<GaraListDTO> getAllGare() {
+        return garaRepository.findAllByOrderByDataInizioDesc()
+                .stream()
+                .map(g -> new GaraListDTO(
+                        g.getId(),
+                        g.getNome(),
+                        g.getStato(),
+                        g.getDataInizio(),
+                        g.getDataFine(),
+                        g.getNumeroStazioni()
+                ))
+                .toList();
+    }
+
+    @Transactional
+    public Gara updateGara(Long garaId, UpdateGaraRequest dto) {
+
+        Gara gara = garaRepository.findById(garaId)
+                .orElseThrow(() -> new DomainException("Gara non trovata"));
+
+        if (gara.getStato() != StatoGara.BOZZA) {
+            throw new DomainException("Modifiche consentite solo su gara in BOZZA");
+        }
+
+        if (dto.nome() != null) {
+            gara.setNome(dto.nome());
+        }
+        LocalDate nuovaDataInizio =
+                dto.dataInizio() != null ? dto.dataInizio() : gara.getDataInizio();
+
+        LocalDate nuovaDataFine =
+                dto.dataFine() != null
+                        ? dto.dataFine()
+                        : (gara.getDataFine() != null
+                        ? gara.getDataFine()
+                        : nuovaDataInizio);
+
+        if (nuovaDataFine.isBefore(nuovaDataInizio)) {
+            throw new DomainException("La data fine non può essere prima della data inizio");
+        }
+
+        gara.setDataInizio(nuovaDataInizio);
+        gara.setDataFine(nuovaDataFine);
+
+        if (dto.numeroStazioni() != null) {
+
+            if (dto.numeroStazioni() < 3) {
+                throw new DomainException("Il numero minimo di stazioni è 3");
+            }
+
+            gara.setNumeroStazioni(dto.numeroStazioni());
+        }
+
+        return gara;
     }
 
 

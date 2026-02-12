@@ -12,5 +12,11 @@ public interface PilotaRepository extends JpaRepository<Pilota, Long> {
 
     long countByGaraId(Long garaId);
 
+    boolean existsByGaraIdAndNumeroGaraAndIdNot(
+            Long garaId,
+            String numeroGara,
+            Long id
+    );
+
 
 }

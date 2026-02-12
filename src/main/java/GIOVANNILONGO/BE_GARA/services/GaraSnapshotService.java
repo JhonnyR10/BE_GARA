@@ -33,6 +33,8 @@ public class GaraSnapshotService {
                 ).orElseThrow(() ->
                         new DomainException("Nessuna giornata ATTIVA per la gara")
                 );
+        boolean ultimaGiornata =
+                giornata.getData().isEqual(gara.getDataFine());
 
 
         return new GaraAttivaSnapshotDTO(
@@ -44,7 +46,8 @@ public class GaraSnapshotService {
                         .stream().map(this::mapPilota).toList(),
                 timeRecordRepository.findByGiornoGaraId(giornata.getId())
                         .stream().map(this::mapTempo).toList(),
-                classificaService.classificaPerGiornata(giornata.getId())
+                classificaService.classificaPerGiornata(giornata.getId()),
+                ultimaGiornata
         );
     }
 

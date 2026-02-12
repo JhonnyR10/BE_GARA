@@ -51,19 +51,14 @@ public class ClassificaService {
 
             Long tempoOrdinamento = null;
 
-            // 1️⃣ STOP → tempo totale
             if (risultato.tempoTotaleMillis() != null) {
                 tempoOrdinamento = risultato.tempoTotaleMillis();
-            }
-            // 2️⃣ parziali → ultimo parziale
-            else if (!risultato.parziali().isEmpty()) {
+            } else if (!risultato.parziali().isEmpty()) {
                 tempoOrdinamento =
                         risultato.parziali()
                                 .get(risultato.parziali().size() - 1)
                                 .durataMillis();
-            }
-            // 3️⃣ SOLO START → tempo = 0
-            else {
+            } else {
                 boolean haStart = timeRecordRepository
                         .existsByGiornoGaraIdAndPilotaId(giornoGaraId, c.getId());
 

@@ -5,6 +5,7 @@ import GIOVANNILONGO.BE_GARA.entities.GiornoGara;
 import GIOVANNILONGO.BE_GARA.enums.StatoGara;
 import GIOVANNILONGO.BE_GARA.enums.StatoGiornata;
 import GIOVANNILONGO.BE_GARA.exceptions.DomainException;
+import GIOVANNILONGO.BE_GARA.payloads.GiornoGaraDTO;
 import GIOVANNILONGO.BE_GARA.repositories.GaraRepository;
 import GIOVANNILONGO.BE_GARA.repositories.GiornoGaraRepository;
 import lombok.RequiredArgsConstructor;
@@ -58,13 +59,30 @@ public class GiornoGaraService {
         if (index + 1 < giornate.size()) {
             GiornoGara successiva = giornate.get(index + 1);
             successiva.setStato(StatoGiornata.ATTIVA);
+            realtimeService.inviaSnapshotGaraAttiva();
             return false;
         }
 
+        gara.setStato(StatoGara.CONCLUSA);
         realtimeService.inviaClassificaTotale(gara.getId());
-        realtimeService.inviaSnapshotGaraAttiva();
 
 
         return true;
     }
+
+    public List<GiornoGaraDTO> getGiornateDTO(Long garaId) {
+
+        List<GiornoGara> giornate =
+                giornoGaraRepository.findByGaraIdOrderByNumeroAsc(garaId);
+
+        return giornate.stream()
+                .map(g -> new GiornoGaraDTO(
+                        g.getId(),
+                        g.getNumero(),
+                        g.getData(),
+                        g.getStato()
+                ))
+                .toList();
+    }
+
 }

@@ -3,11 +3,15 @@ package GIOVANNILONGO.BE_GARA.services;
 import GIOVANNILONGO.BE_GARA.entities.Gara;
 import GIOVANNILONGO.BE_GARA.entities.Pilota;
 import GIOVANNILONGO.BE_GARA.enums.StatoGara;
+import GIOVANNILONGO.BE_GARA.exceptions.DomainException;
 import GIOVANNILONGO.BE_GARA.payloads.CreazionePilotaRequest;
+import GIOVANNILONGO.BE_GARA.payloads.PilotaDTO;
+import GIOVANNILONGO.BE_GARA.payloads.UpdatePilotaRequest;
 import GIOVANNILONGO.BE_GARA.repositories.GaraRepository;
 import GIOVANNILONGO.BE_GARA.repositories.PilotaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -49,4 +53,67 @@ public class PilotaService {
                 );
         return pilotaRepository.findByGaraId(gara.getId());
     }
+
+    @Transactional
+    public void deletePilota(Long pilotaId) {
+
+        Pilota pilota = pilotaRepository.findById(pilotaId)
+                .orElseThrow(() -> new DomainException("Pilota non trovato"));
+
+        if (pilota.getGara().getStato() != StatoGara.BOZZA) {
+            throw new DomainException("Eliminazione consentita solo su gara in BOZZA");
+        }
+
+        pilotaRepository.delete(pilota);
+    }
+
+    @Transactional
+    public PilotaDTO updatePilota(Long pilotaId, UpdatePilotaRequest dto) {
+
+        Pilota pilota = pilotaRepository.findById(pilotaId)
+                .orElseThrow(() -> new DomainException("Pilota non trovato"));
+
+        Gara gara = pilota.getGara();
+
+        if (gara.getStato() != StatoGara.BOZZA) {
+            throw new DomainException("Modifiche consentite solo su gara in BOZZA");
+        }
+
+        if (dto.nomePilota() != null) {
+            pilota.setNomePilota(dto.nomePilota());
+        }
+
+        if (dto.numeroGara() != null) {
+
+            boolean numeroDuplicato =
+                    pilotaRepository.existsByGaraIdAndNumeroGaraAndIdNot(
+                            gara.getId(),
+                            dto.numeroGara(),
+                            pilotaId
+                    );
+
+            if (numeroDuplicato) {
+                throw new DomainException("Numero gara già esistente");
+            }
+
+            pilota.setNumeroGara(dto.numeroGara());
+        }
+
+        if (dto.nomeCopilota() != null) {
+            pilota.setNomeCopilota(dto.nomeCopilota());
+        }
+        if (dto.team() != null) {
+            pilota.setTeam(dto.team());
+        }
+
+        return new PilotaDTO(
+                pilota.getId(),
+                pilota.getNomePilota(),
+                pilota.getNumeroGara(),
+                pilota.getNomeCopilota(),
+                pilota.getTeam()
+        );
+    }
+
+
 }
